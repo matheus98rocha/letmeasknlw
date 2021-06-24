@@ -1,4 +1,5 @@
 import { useHistory } from 'react-router-dom';
+import { FormEvent, useState } from 'react'
 
 import ilustrationImg from '../assets/images/illustration.svg';
 import logoImg from '../assets/images/logo.svg'
@@ -7,17 +8,48 @@ import googleIconImg from '../assets/images/google-icon.svg';
 import '../styles/auth.scss';
 import { Button } from '../components/Button';
 import { UseAuth } from '../hooks/useAuth';
+import { database } from '../services/firebase';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export function Home() {
     const history = useHistory();
     const { user, signInWithGoogle } = UseAuth();
+    const [roomCode, setRoomCode] = useState('');
+
+    const notify = () => toast("Ops...Esse código de sala não foi encontrado!!", {
+        autoClose: 4000,
+        closeOnClick: true,
+        type: 'error',
+
+    })
 
     async function handleCreateRoom() {
         if (!user) {
             await signInWithGoogle()
         }
         history.push('/rooms/new')
+
+    }
+
+    async function handleJoinRoom(event: FormEvent) {
+
+        event.preventDefault();
+
+        if (roomCode.trim() === '') {
+            return;
+        }
+
+        const roomRef = await database.ref(`rooms/${roomCode}`).get();
+
+        if (!roomRef.exists()) {
+            notify();
+            return
+        }
+
+        history.push(`/rooms/${roomCode}`);
 
     }
 
@@ -37,15 +69,20 @@ export function Home() {
                         Crie sua sala com o google
                     </button>
                     <div className="separator">Ou entre em uma sala</div>
-                    <form>
+                    <form onSubmit={handleJoinRoom}>
                         <input
                             type="text"
                             placeholder="Digite o código da sala"
+                            onChange={event => setRoomCode(event.target.value)}
+                            value={roomCode}
                         />
                         <Button type="submit">
                             Entrar na sala
                         </Button>
                     </form>
+                    <ToastContainer
+                        autoClose={5000}
+                    />
                 </div>
             </main>
         </div>
