@@ -19,10 +19,10 @@ export function Home() {
     const { user, signInWithGoogle } = UseAuth();
     const [roomCode, setRoomCode] = useState('');
 
-    const notify = () => toast("Ops...Esse código de sala não foi encontrado!!", {
+    const notify = () => toast("Ops...Essa sala não foi encontrado ou não já está encerrada!!", {
         autoClose: 4000,
         closeOnClick: true,
-        type: 'error',
+        type: 'warning',
 
     })
 
@@ -45,6 +45,11 @@ export function Home() {
         const roomRef = await database.ref(`rooms/${roomCode}`).get();
 
         if (!roomRef.exists()) {
+            notify();
+            return
+        }
+
+        if (roomRef.val().endedAt) {
             notify();
             return
         }
