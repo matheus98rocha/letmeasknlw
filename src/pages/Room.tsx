@@ -11,6 +11,9 @@ import { database } from '../services/firebase';
 import { Question } from '../components/Question';
 import { useRoom } from '../hooks/useRoom';
 
+import { useHistory } from 'react-router-dom';
+
+
 
 
 type RoomParams = {
@@ -18,6 +21,10 @@ type RoomParams = {
 }
 
 export function Room() {
+
+    const history = useHistory();
+
+
     const notify = () => toast("Você precisa estar logado para enviar uma perguntas.", {
         autoClose: 4000,
         closeOnClick: true,
@@ -25,7 +32,7 @@ export function Room() {
 
     })
 
-    const { user } = UseAuth();
+    const { user, signInWithGoogle } = UseAuth();
     const params = useParams<RoomParams>();
     const [newQuestion, setNewQuestion] = useState('');
     const roomId = params.id
@@ -60,6 +67,14 @@ export function Room() {
         await database.ref(`rooms/${roomId}/questions`).push(question);
 
         setNewQuestion('');
+
+    }
+
+    async function handleCreateRoom() {
+        if (!user) {
+            await signInWithGoogle()
+        }
+        history.push('/rooms/new')
 
     }
 
@@ -104,7 +119,7 @@ export function Room() {
                                     <span>{user.name}</span>
                                 </div>
                             ) : (
-                                <span>Para enviar uma pergunta, <button className="login-btn">faça seu login.</button></span>
+                                <span>Para enviar uma pergunta, <button className="login-btn" onClick={handleCreateRoom}>faça seu login.</button></span>
                             )
                         }
                         <Button type="submit" disabled={!user}>Enviar pergunta</Button>
@@ -147,3 +162,7 @@ export function Room() {
         </div >
     )
 }
+function signInWithGoogle() {
+    throw new Error('Function not implemented.');
+}
+
