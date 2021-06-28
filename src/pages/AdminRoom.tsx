@@ -15,7 +15,6 @@ import { Button } from '../components/Button';
 import { database } from '../services/firebase';
 
 
-
 type RoomParams = {
     id: string;
 }
@@ -89,40 +88,43 @@ export function AdminRoom() {
                     {
                         questions.map(question => {
                             return (
-                                <Question
-                                    content={question.content}
-                                    author={question.author}
-                                    key={question.id}
-                                    isAnswered={question.isAnswered}
-                                    isHighlighted={question.isHighlighted}
+                                <>
+                                    <>
+                                        <Question
+                                            content={question.content}
+                                            author={question.author}
+                                            key={question.id}
+                                            isAnswered={question.isAnswered}
+                                            isHighlighted={question.isHighlighted}
 
-                                >
-                                    {!question.isAnswered &&
-                                        <>
+                                        >
+                                            {!question.isAnswered &&
+                                                <>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleCheckQuestionAsAnswered(question.id)}
+                                                    >
+                                                        <img src={checkImg} alt="Checar pergunta" />
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleHighlightQuestion(question.id)}
+                                                    >
+                                                        <img src={answerImg} alt="Responder pergunta" />
+                                                    </button>
+                                                </>
+                                            }
+
                                             <button
                                                 type="button"
-                                                onClick={() => handleCheckQuestionAsAnswered(question.id)}
+                                                onClick={() => handleDeleteQuestion(question.id)}
                                             >
-                                                <img src={checkImg} alt="Checar pergunta" />
+                                                <img src={deleteImg} alt="Remover pergunta" />
                                             </button>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => handleHighlightQuestion(question.id)}
-                                            >
-                                                <img src={answerImg} alt="Responder pergunta" />
-                                            </button>
-                                        </>
-                                    }
-
-                                    <button
-                                        type="button"
-                                        onClick={() => handleDeleteQuestion(question.id)}
-                                    >
-                                        <img src={deleteImg} alt="Remover pergunta" />
-                                    </button>
-
-                                </Question>
+                                        </Question>
+                                    </>
+                                </>
                             );
                         })
                     }

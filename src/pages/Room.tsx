@@ -10,8 +10,7 @@ import { toast } from 'react-toastify';
 import { database } from '../services/firebase';
 import { Question } from '../components/Question';
 import { useRoom } from '../hooks/useRoom';
-
-import { useHistory } from 'react-router-dom';
+import { useEffect } from 'react';
 
 
 
@@ -22,7 +21,6 @@ type RoomParams = {
 
 export function Room() {
 
-    const history = useHistory();
 
 
     const notify = () => toast("Você precisa estar logado para enviar uma perguntas.", {
@@ -70,14 +68,6 @@ export function Room() {
 
     }
 
-    async function handleCreateRoom() {
-        if (!user) {
-            await signInWithGoogle()
-        }
-        history.push('/rooms/new')
-
-    }
-
     async function handleLikeQuestion(questionId: string, likeId: string | undefined) {
         if (likeId) {
             // Remove like
@@ -119,7 +109,7 @@ export function Room() {
                                     <span>{user.name}</span>
                                 </div>
                             ) : (
-                                <span>Para enviar uma pergunta, <button className="login-btn" onClick={handleCreateRoom}>faça seu login.</button></span>
+                                <span>Para enviar uma pergunta, <button className="login-btn" onClick={signInWithGoogle}>faça seu login.</button></span>
                             )
                         }
                         <Button type="submit" disabled={!user}>Enviar pergunta</Button>

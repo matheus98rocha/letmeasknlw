@@ -19,7 +19,7 @@ export function Home() {
     const { user, signInWithGoogle } = UseAuth();
     const [roomCode, setRoomCode] = useState('');
 
-    const notify = () => toast("Ops...Essa sala não foi encontrado ou não já está encerrada!!", {
+    const notify = () => toast("Ops...Essa sala não foi encontrado ou já está encerrada!!", {
         autoClose: 4000,
         closeOnClick: true,
         type: 'warning',
